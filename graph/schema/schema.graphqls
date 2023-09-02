@@ -1,0 +1,61 @@
+type User {
+  id: ID!
+  name: String!
+  mail: String!
+  password: String!
+  gender: Gender
+  affiliation: Affiliation
+  groups: [Group!]
+  Skills: [Skill!]
+}
+
+enum Gender {
+  MAN
+  WOMAN
+  OTHER
+}
+
+enum Affiliation {
+  STUDENT
+  OTHER
+}
+
+type Group {
+  id: ID!
+  name: String!
+  description: String!
+}
+
+type Query {
+  getUser(id: ID!): createUserPayload!
+}
+
+input createUserInput {
+  naem: String!
+  mail: String!
+  password: String!
+  gender: Gender
+  affiliation: Affiliation
+  GroupName: String
+}
+
+type createUserPayload {
+  id: ID!
+  name: String!
+  mail: String!
+  gender: Gender
+  affiliation: Affiliation
+  groups: [Group!]
+  Skills: [Skill!]
+}
+
+type Mutation {
+  createUser(input: createUserInput!): createUserPayload!
+}
+
+type Skill {
+  id: ID!
+  level: Int!
+  name: String!
+  description: String!
+}
