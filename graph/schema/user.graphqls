@@ -1,4 +1,4 @@
-type User {
+type User implements Node{
   id: ID!
   name: String!
   mail: String!
@@ -20,14 +20,10 @@ enum Affiliation {
   OTHER
 }
 
-type Group {
+type Group implements Node{
   id: ID!
   name: String!
   description: String!
-}
-
-type Query {
-  getUser(id: ID!): createUserPayload!
 }
 
 input createUserInput {
@@ -39,7 +35,7 @@ input createUserInput {
   GroupName: String
 }
 
-type createUserPayload {
+type userPayload implements Node {
   id: ID!
   name: String!
   mail: String!
@@ -49,13 +45,10 @@ type createUserPayload {
   Skills: [Skill!]
 }
 
-type Mutation {
-  createUser(input: createUserInput!): createUserPayload!
+extend type Query {
+  user(id: ID!): userPayload!
 }
 
-type Skill {
-  id: ID!
-  level: Int!
-  name: String!
-  description: String!
+type Mutation {
+  createUser(input: createUserInput!): userPayload!
 }

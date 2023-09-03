@@ -55,7 +55,8 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		GetUser func(childComplexity int, id string) int
+		Node func(childComplexity int, id string) int
+		User func(childComplexity int, id string) int
 	}
 
 	Skill struct {
@@ -76,7 +77,7 @@ type ComplexityRoot struct {
 		Skills      func(childComplexity int) int
 	}
 
-	CreateUserPayload struct {
+	UserPayload struct {
 		Affiliation func(childComplexity int) int
 		Gender      func(childComplexity int) int
 		Groups      func(childComplexity int) int
@@ -88,10 +89,11 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	CreateUser(ctx context.Context, input model.CreateUserInput) (*model.CreateUserPayload, error)
+	CreateUser(ctx context.Context, input model.CreateUserInput) (*model.UserPayload, error)
 }
 type QueryResolver interface {
-	GetUser(ctx context.Context, id string) (*model.CreateUserPayload, error)
+	Node(ctx context.Context, id string) (model.Node, error)
+	User(ctx context.Context, id string) (*model.UserPayload, error)
 }
 
 type executableSchema struct {
@@ -142,17 +144,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(model.CreateUserInput)), true
 
-	case "Query.getUser":
-		if e.complexity.Query.GetUser == nil {
+	case "Query.node":
+		if e.complexity.Query.Node == nil {
 			break
 		}
 
-		args, err := ec.field_Query_getUser_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_node_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.GetUser(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.Node(childComplexity, args["id"].(string)), true
+
+	case "Query.user":
+		if e.complexity.Query.User == nil {
+			break
+		}
+
+		args, err := ec.field_Query_user_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.User(childComplexity, args["id"].(string)), true
 
 	case "Skill.description":
 		if e.complexity.Skill.Description == nil {
@@ -238,54 +252,54 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Skills(childComplexity), true
 
-	case "createUserPayload.affiliation":
-		if e.complexity.CreateUserPayload.Affiliation == nil {
+	case "userPayload.affiliation":
+		if e.complexity.UserPayload.Affiliation == nil {
 			break
 		}
 
-		return e.complexity.CreateUserPayload.Affiliation(childComplexity), true
+		return e.complexity.UserPayload.Affiliation(childComplexity), true
 
-	case "createUserPayload.gender":
-		if e.complexity.CreateUserPayload.Gender == nil {
+	case "userPayload.gender":
+		if e.complexity.UserPayload.Gender == nil {
 			break
 		}
 
-		return e.complexity.CreateUserPayload.Gender(childComplexity), true
+		return e.complexity.UserPayload.Gender(childComplexity), true
 
-	case "createUserPayload.groups":
-		if e.complexity.CreateUserPayload.Groups == nil {
+	case "userPayload.groups":
+		if e.complexity.UserPayload.Groups == nil {
 			break
 		}
 
-		return e.complexity.CreateUserPayload.Groups(childComplexity), true
+		return e.complexity.UserPayload.Groups(childComplexity), true
 
-	case "createUserPayload.id":
-		if e.complexity.CreateUserPayload.ID == nil {
+	case "userPayload.id":
+		if e.complexity.UserPayload.ID == nil {
 			break
 		}
 
-		return e.complexity.CreateUserPayload.ID(childComplexity), true
+		return e.complexity.UserPayload.ID(childComplexity), true
 
-	case "createUserPayload.mail":
-		if e.complexity.CreateUserPayload.Mail == nil {
+	case "userPayload.mail":
+		if e.complexity.UserPayload.Mail == nil {
 			break
 		}
 
-		return e.complexity.CreateUserPayload.Mail(childComplexity), true
+		return e.complexity.UserPayload.Mail(childComplexity), true
 
-	case "createUserPayload.name":
-		if e.complexity.CreateUserPayload.Name == nil {
+	case "userPayload.name":
+		if e.complexity.UserPayload.Name == nil {
 			break
 		}
 
-		return e.complexity.CreateUserPayload.Name(childComplexity), true
+		return e.complexity.UserPayload.Name(childComplexity), true
 
-	case "createUserPayload.Skills":
-		if e.complexity.CreateUserPayload.Skills == nil {
+	case "userPayload.Skills":
+		if e.complexity.UserPayload.Skills == nil {
 			break
 		}
 
-		return e.complexity.CreateUserPayload.Skills(childComplexity), true
+		return e.complexity.UserPayload.Skills(childComplexity), true
 
 	}
 	return 0, false
@@ -393,7 +407,25 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../schema/user.graphqls", Input: `type User {
+	{Name: "../schema/node.graphqls", Input: `directive @goField(forceResolver: Boolean, name: String) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+interface Node {
+  """
+  任意のID
+  """
+  id: ID! @goField(forceResolver: true)
+}
+
+type Query{
+  node(id: ID!): Node!
+}`, BuiltIn: false},
+	{Name: "../schema/skill.graphqls", Input: `type Skill implements Node{
+  id: ID!
+  level: Int!
+  name: String!
+  description: String!
+}`, BuiltIn: false},
+	{Name: "../schema/user.graphqls", Input: `type User implements Node{
   id: ID!
   name: String!
   mail: String!
@@ -415,14 +447,10 @@ enum Affiliation {
   OTHER
 }
 
-type Group {
+type Group implements Node{
   id: ID!
   name: String!
   description: String!
-}
-
-type Query {
-  getUser(id: ID!): createUserPayload!
 }
 
 input createUserInput {
@@ -434,7 +462,7 @@ input createUserInput {
   GroupName: String
 }
 
-type createUserPayload {
+type userPayload implements Node {
   id: ID!
   name: String!
   mail: String!
@@ -444,16 +472,14 @@ type createUserPayload {
   Skills: [Skill!]
 }
 
-type Mutation {
-  createUser(input: createUserInput!): createUserPayload!
+extend type Query {
+  user(id: ID!): userPayload!
 }
 
-type Skill {
-  id: ID!
-  level: Int!
-  name: String!
-  description: String!
-}`, BuiltIn: false},
+type Mutation {
+  createUser(input: createUserInput!): userPayload!
+}
+`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -491,7 +517,22 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_getUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_node_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_user_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -702,9 +743,9 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.CreateUserPayload)
+	res := resTmp.(*model.UserPayload)
 	fc.Result = res
-	return ec.marshalNcreateUserPayload2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐCreateUserPayload(ctx, field.Selections, res)
+	return ec.marshalNuserPayload2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐUserPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -716,21 +757,21 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_createUserPayload_id(ctx, field)
+				return ec.fieldContext_userPayload_id(ctx, field)
 			case "name":
-				return ec.fieldContext_createUserPayload_name(ctx, field)
+				return ec.fieldContext_userPayload_name(ctx, field)
 			case "mail":
-				return ec.fieldContext_createUserPayload_mail(ctx, field)
+				return ec.fieldContext_userPayload_mail(ctx, field)
 			case "gender":
-				return ec.fieldContext_createUserPayload_gender(ctx, field)
+				return ec.fieldContext_userPayload_gender(ctx, field)
 			case "affiliation":
-				return ec.fieldContext_createUserPayload_affiliation(ctx, field)
+				return ec.fieldContext_userPayload_affiliation(ctx, field)
 			case "groups":
-				return ec.fieldContext_createUserPayload_groups(ctx, field)
+				return ec.fieldContext_userPayload_groups(ctx, field)
 			case "Skills":
-				return ec.fieldContext_createUserPayload_Skills(ctx, field)
+				return ec.fieldContext_userPayload_Skills(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type createUserPayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type userPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -747,8 +788,8 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_getUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getUser(ctx, field)
+func (ec *executionContext) _Query_node(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_node(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -761,7 +802,7 @@ func (ec *executionContext) _Query_getUser(ctx context.Context, field graphql.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetUser(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Query().Node(rctx, fc.Args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -773,35 +814,19 @@ func (ec *executionContext) _Query_getUser(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.CreateUserPayload)
+	res := resTmp.(model.Node)
 	fc.Result = res
-	return ec.marshalNcreateUserPayload2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐCreateUserPayload(ctx, field.Selections, res)
+	return ec.marshalNNode2githubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐNode(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_getUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_createUserPayload_id(ctx, field)
-			case "name":
-				return ec.fieldContext_createUserPayload_name(ctx, field)
-			case "mail":
-				return ec.fieldContext_createUserPayload_mail(ctx, field)
-			case "gender":
-				return ec.fieldContext_createUserPayload_gender(ctx, field)
-			case "affiliation":
-				return ec.fieldContext_createUserPayload_affiliation(ctx, field)
-			case "groups":
-				return ec.fieldContext_createUserPayload_groups(ctx, field)
-			case "Skills":
-				return ec.fieldContext_createUserPayload_Skills(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type createUserPayload", field.Name)
+			return nil, errors.New("FieldContext.Child cannot be called on type INTERFACE")
 		},
 	}
 	defer func() {
@@ -811,7 +836,78 @@ func (ec *executionContext) fieldContext_Query_getUser(ctx context.Context, fiel
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_node_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_user(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_user(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().User(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.UserPayload)
+	fc.Result = res
+	return ec.marshalNuserPayload2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐUserPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_userPayload_id(ctx, field)
+			case "name":
+				return ec.fieldContext_userPayload_name(ctx, field)
+			case "mail":
+				return ec.fieldContext_userPayload_mail(ctx, field)
+			case "gender":
+				return ec.fieldContext_userPayload_gender(ctx, field)
+			case "affiliation":
+				return ec.fieldContext_userPayload_affiliation(ctx, field)
+			case "groups":
+				return ec.fieldContext_userPayload_groups(ctx, field)
+			case "Skills":
+				return ec.fieldContext_userPayload_Skills(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type userPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_user_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -3250,8 +3346,8 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _createUserPayload_id(ctx context.Context, field graphql.CollectedField, obj *model.CreateUserPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_createUserPayload_id(ctx, field)
+func (ec *executionContext) _userPayload_id(ctx context.Context, field graphql.CollectedField, obj *model.UserPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_userPayload_id(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3281,9 +3377,9 @@ func (ec *executionContext) _createUserPayload_id(ctx context.Context, field gra
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_createUserPayload_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_userPayload_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "createUserPayload",
+		Object:     "userPayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -3294,8 +3390,8 @@ func (ec *executionContext) fieldContext_createUserPayload_id(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _createUserPayload_name(ctx context.Context, field graphql.CollectedField, obj *model.CreateUserPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_createUserPayload_name(ctx, field)
+func (ec *executionContext) _userPayload_name(ctx context.Context, field graphql.CollectedField, obj *model.UserPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_userPayload_name(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3325,9 +3421,9 @@ func (ec *executionContext) _createUserPayload_name(ctx context.Context, field g
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_createUserPayload_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_userPayload_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "createUserPayload",
+		Object:     "userPayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -3338,8 +3434,8 @@ func (ec *executionContext) fieldContext_createUserPayload_name(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _createUserPayload_mail(ctx context.Context, field graphql.CollectedField, obj *model.CreateUserPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_createUserPayload_mail(ctx, field)
+func (ec *executionContext) _userPayload_mail(ctx context.Context, field graphql.CollectedField, obj *model.UserPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_userPayload_mail(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3369,9 +3465,9 @@ func (ec *executionContext) _createUserPayload_mail(ctx context.Context, field g
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_createUserPayload_mail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_userPayload_mail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "createUserPayload",
+		Object:     "userPayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -3382,8 +3478,8 @@ func (ec *executionContext) fieldContext_createUserPayload_mail(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _createUserPayload_gender(ctx context.Context, field graphql.CollectedField, obj *model.CreateUserPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_createUserPayload_gender(ctx, field)
+func (ec *executionContext) _userPayload_gender(ctx context.Context, field graphql.CollectedField, obj *model.UserPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_userPayload_gender(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3410,9 +3506,9 @@ func (ec *executionContext) _createUserPayload_gender(ctx context.Context, field
 	return ec.marshalOGender2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐGender(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_createUserPayload_gender(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_userPayload_gender(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "createUserPayload",
+		Object:     "userPayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -3423,8 +3519,8 @@ func (ec *executionContext) fieldContext_createUserPayload_gender(ctx context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _createUserPayload_affiliation(ctx context.Context, field graphql.CollectedField, obj *model.CreateUserPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_createUserPayload_affiliation(ctx, field)
+func (ec *executionContext) _userPayload_affiliation(ctx context.Context, field graphql.CollectedField, obj *model.UserPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_userPayload_affiliation(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3451,9 +3547,9 @@ func (ec *executionContext) _createUserPayload_affiliation(ctx context.Context, 
 	return ec.marshalOAffiliation2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐAffiliation(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_createUserPayload_affiliation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_userPayload_affiliation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "createUserPayload",
+		Object:     "userPayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -3464,8 +3560,8 @@ func (ec *executionContext) fieldContext_createUserPayload_affiliation(ctx conte
 	return fc, nil
 }
 
-func (ec *executionContext) _createUserPayload_groups(ctx context.Context, field graphql.CollectedField, obj *model.CreateUserPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_createUserPayload_groups(ctx, field)
+func (ec *executionContext) _userPayload_groups(ctx context.Context, field graphql.CollectedField, obj *model.UserPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_userPayload_groups(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3492,9 +3588,9 @@ func (ec *executionContext) _createUserPayload_groups(ctx context.Context, field
 	return ec.marshalOGroup2ᚕᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐGroupᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_createUserPayload_groups(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_userPayload_groups(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "createUserPayload",
+		Object:     "userPayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -3513,8 +3609,8 @@ func (ec *executionContext) fieldContext_createUserPayload_groups(ctx context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _createUserPayload_Skills(ctx context.Context, field graphql.CollectedField, obj *model.CreateUserPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_createUserPayload_Skills(ctx, field)
+func (ec *executionContext) _userPayload_Skills(ctx context.Context, field graphql.CollectedField, obj *model.UserPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_userPayload_Skills(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3541,9 +3637,9 @@ func (ec *executionContext) _createUserPayload_Skills(ctx context.Context, field
 	return ec.marshalOSkill2ᚕᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐSkillᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_createUserPayload_Skills(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_userPayload_Skills(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "createUserPayload",
+		Object:     "userPayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -3646,11 +3742,48 @@ func (ec *executionContext) unmarshalInputcreateUserInput(ctx context.Context, o
 
 // region    ************************** interface.gotpl ***************************
 
+func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj model.Node) graphql.Marshaler {
+	switch obj := (obj).(type) {
+	case nil:
+		return graphql.Null
+	case model.Skill:
+		return ec._Skill(ctx, sel, &obj)
+	case *model.Skill:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Skill(ctx, sel, obj)
+	case model.User:
+		return ec._User(ctx, sel, &obj)
+	case *model.User:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._User(ctx, sel, obj)
+	case model.Group:
+		return ec._Group(ctx, sel, &obj)
+	case *model.Group:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Group(ctx, sel, obj)
+	case model.UserPayload:
+		return ec._userPayload(ctx, sel, &obj)
+	case *model.UserPayload:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._userPayload(ctx, sel, obj)
+	default:
+		panic(fmt.Errorf("unexpected type %T", obj))
+	}
+}
+
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
 
-var groupImplementors = []string{"Group"}
+var groupImplementors = []string{"Group", "Node"}
 
 func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, obj *model.Group) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, groupImplementors)
@@ -3767,7 +3900,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "getUser":
+		case "node":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -3776,7 +3909,29 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getUser(ctx, field)
+				res = ec._Query_node(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "user":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_user(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -3820,7 +3975,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	return out
 }
 
-var skillImplementors = []string{"Skill"}
+var skillImplementors = []string{"Skill", "Node"}
 
 func (ec *executionContext) _Skill(ctx context.Context, sel ast.SelectionSet, obj *model.Skill) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, skillImplementors)
@@ -3874,7 +4029,7 @@ func (ec *executionContext) _Skill(ctx context.Context, sel ast.SelectionSet, ob
 	return out
 }
 
-var userImplementors = []string{"User"}
+var userImplementors = []string{"User", "Node"}
 
 func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj *model.User) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, userImplementors)
@@ -4258,40 +4413,40 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 	return out
 }
 
-var createUserPayloadImplementors = []string{"createUserPayload"}
+var userPayloadImplementors = []string{"userPayload", "Node"}
 
-func (ec *executionContext) _createUserPayload(ctx context.Context, sel ast.SelectionSet, obj *model.CreateUserPayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, createUserPayloadImplementors)
+func (ec *executionContext) _userPayload(ctx context.Context, sel ast.SelectionSet, obj *model.UserPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userPayloadImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("createUserPayload")
+			out.Values[i] = graphql.MarshalString("userPayload")
 		case "id":
-			out.Values[i] = ec._createUserPayload_id(ctx, field, obj)
+			out.Values[i] = ec._userPayload_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "name":
-			out.Values[i] = ec._createUserPayload_name(ctx, field, obj)
+			out.Values[i] = ec._userPayload_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "mail":
-			out.Values[i] = ec._createUserPayload_mail(ctx, field, obj)
+			out.Values[i] = ec._userPayload_mail(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "gender":
-			out.Values[i] = ec._createUserPayload_gender(ctx, field, obj)
+			out.Values[i] = ec._userPayload_gender(ctx, field, obj)
 		case "affiliation":
-			out.Values[i] = ec._createUserPayload_affiliation(ctx, field, obj)
+			out.Values[i] = ec._userPayload_affiliation(ctx, field, obj)
 		case "groups":
-			out.Values[i] = ec._createUserPayload_groups(ctx, field, obj)
+			out.Values[i] = ec._userPayload_groups(ctx, field, obj)
 		case "Skills":
-			out.Values[i] = ec._createUserPayload_Skills(ctx, field, obj)
+			out.Values[i] = ec._userPayload_Skills(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4372,6 +4527,16 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNNode2githubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐNode(ctx context.Context, sel ast.SelectionSet, v model.Node) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Node(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNSkill2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐSkill(ctx context.Context, sel ast.SelectionSet, v *model.Skill) graphql.Marshaler {
@@ -4657,18 +4822,18 @@ func (ec *executionContext) unmarshalNcreateUserInput2githubᚗcomᚋyuoreiᚋha
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNcreateUserPayload2githubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐCreateUserPayload(ctx context.Context, sel ast.SelectionSet, v model.CreateUserPayload) graphql.Marshaler {
-	return ec._createUserPayload(ctx, sel, &v)
+func (ec *executionContext) marshalNuserPayload2githubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐUserPayload(ctx context.Context, sel ast.SelectionSet, v model.UserPayload) graphql.Marshaler {
+	return ec._userPayload(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNcreateUserPayload2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐCreateUserPayload(ctx context.Context, sel ast.SelectionSet, v *model.CreateUserPayload) graphql.Marshaler {
+func (ec *executionContext) marshalNuserPayload2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐUserPayload(ctx context.Context, sel ast.SelectionSet, v *model.UserPayload) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._createUserPayload(ctx, sel, v)
+	return ec._userPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOAffiliation2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐAffiliation(ctx context.Context, v interface{}) (*model.Affiliation, error) {

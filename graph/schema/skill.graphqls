@@ -1,0 +1,6 @@
+type Skill implements Node{
+  id: ID!
+  level: Int!
+  name: String!
+  description: String!
+}

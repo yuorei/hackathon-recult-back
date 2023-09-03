@@ -8,11 +8,22 @@ import (
 	"strconv"
 )
 
+type Node interface {
+	IsNode()
+	// 任意のID
+	GetID() string
+}
+
 type Group struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 }
+
+func (Group) IsNode() {}
+
+// 任意のID
+func (this Group) GetID() string { return this.ID }
 
 type Skill struct {
 	ID          string `json:"id"`
@@ -20,6 +31,11 @@ type Skill struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 }
+
+func (Skill) IsNode() {}
+
+// 任意のID
+func (this Skill) GetID() string { return this.ID }
 
 type User struct {
 	ID          string       `json:"id"`
@@ -32,6 +48,11 @@ type User struct {
 	Skills      []*Skill     `json:"Skills,omitempty"`
 }
 
+func (User) IsNode() {}
+
+// 任意のID
+func (this User) GetID() string { return this.ID }
+
 type CreateUserInput struct {
 	Naem        string       `json:"naem"`
 	Mail        string       `json:"mail"`
@@ -41,7 +62,7 @@ type CreateUserInput struct {
 	GroupName   *string      `json:"GroupName,omitempty"`
 }
 
-type CreateUserPayload struct {
+type UserPayload struct {
 	ID          string       `json:"id"`
 	Name        string       `json:"name"`
 	Mail        string       `json:"mail"`
@@ -50,6 +71,11 @@ type CreateUserPayload struct {
 	Groups      []*Group     `json:"groups,omitempty"`
 	Skills      []*Skill     `json:"Skills,omitempty"`
 }
+
+func (UserPayload) IsNode() {}
+
+// 任意のID
+func (this UserPayload) GetID() string { return this.ID }
 
 type Affiliation string
 
