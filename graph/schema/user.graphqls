@@ -1,0 +1,54 @@
+type User implements Node{
+  id: ID!
+  name: String!
+  mail: String!
+  password: String!
+  gender: Gender
+  affiliation: Affiliation
+  groups: [Group!]
+  Skills: [Skill!]
+}
+
+enum Gender {
+  MAN
+  WOMAN
+  OTHER
+}
+
+enum Affiliation {
+  STUDENT
+  OTHER
+}
+
+type Group implements Node{
+  id: ID!
+  name: String!
+  description: String!
+}
+
+input createUserInput {
+  naem: String!
+  mail: String!
+  password: String!
+  gender: Gender
+  affiliation: Affiliation
+  GroupName: String
+}
+
+type userPayload implements Node {
+  id: ID!
+  name: String!
+  mail: String!
+  gender: Gender
+  affiliation: Affiliation
+  groups: [Group!]
+  Skills: [Skill!]
+}
+
+extend type Query {
+  user(id: ID!): userPayload!
+}
+
+type Mutation {
+  createUser(input: createUserInput!): userPayload!
+}
