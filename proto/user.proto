@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "/user";
+
+service UserService {
+    rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
+}
+
+message GetUserRequest {
+    int64 id = 1;
+}
+
+enum Gender {
+    MAN = 0;
+    WOMAN = 1;
+    GENDER_OTHER = 2;
+}
+
+enum Affiliation {
+    STUDENT = 0;
+    AFFILIATION_OTHER = 1;
+}
+
+message GetUserResponse {
+    int64 id = 1;
+    string name = 2;
+    string mail = 3;
+    Gender gender = 4;
+    Affiliation affiliation = 5;
+    repeated Group groups = 6;
+    repeated Skill skills = 7;
+}
+
+message Group {
+    int32 id = 1;
+    string name = 2;
+    string description = 3;
+}
+
+message Skill {
+    int32 id = 1;
+    string name = 2;
+    string description = 3;
+    int32 level = 4;
+}

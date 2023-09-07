@@ -1,6 +1,6 @@
 package resolver
 
-import "github.com/yuorei/hackathon/services/gateway/application"
+import "github.com/yuorei/hackathon/application"
 
 //go:generate go run github.com/99designs/gqlgen generate
 // This file will not be regenerated automatically.

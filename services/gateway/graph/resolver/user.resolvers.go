@@ -8,8 +8,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/yuorei/hackathon/services/gateway/graph/generated"
-	"github.com/yuorei/hackathon/services/gateway/graph/model"
+	"github.com/yuorei/hackathon/graph/generated"
+	"github.com/yuorei/hackathon/graph/model"
 )
 
 // CreateUser is the resolver for the createUser field.

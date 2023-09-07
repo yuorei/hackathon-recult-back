@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/yuorei/hackathon/services/gateway/graph/generated"
-	"github.com/yuorei/hackathon/services/gateway/graph/model"
+	"github.com/yuorei/hackathon/graph/generated"
+	"github.com/yuorei/hackathon/graph/model"
 )
 
 // Node is the resolver for the node field.

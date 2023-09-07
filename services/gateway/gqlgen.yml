@@ -1,10 +1,10 @@
 # Where are all the schema files located? globs are supported eg  src/**/*.graphqls
 schema:
-  - services/gateway/graph/schema/*.graphqls
+  - graph/schema/*.graphqls
 
 # Where should the generated server code go?
 exec:
-  filename: services/gateway/graph/generated/generated.go
+  filename: graph/generated/generated.go
   package: generated
 
 # Uncomment to enable federation
@@ -14,13 +14,13 @@ exec:
 
 # Where should any generated models go?
 model:
-  filename: services/gateway/graph/model/models_gen.go
+  filename: graph/model/models_gen.go
   package: model
 
 # Where should the resolver implementations go?
 resolver:
   layout: follow-schema
-  dir: services/gateway/graph/resolver
+  dir: graph/resolver
   package: resolver
   filename_template: "{name}.resolvers.go"
   # Optional: turn on to not generate template comments above resolvers
