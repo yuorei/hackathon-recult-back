@@ -3,7 +3,7 @@ package client
 import (
 	"log"
 
-	"github.com/yuorei/hackathon/hackathon-recult-proto/go/user"
+	"github.com/yuorei/hackathon/go/user"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

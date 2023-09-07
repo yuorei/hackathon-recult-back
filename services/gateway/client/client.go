@@ -1,6 +1,6 @@
 package client
 
-import "github.com/yuorei/hackathon/hackathon-recult-proto/go/user"
+import "github.com/yuorei/hackathon/go/user"
 
 type Client struct {
 	userClient user.UserServiceClient

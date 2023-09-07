@@ -15,7 +15,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/introspection"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
-	"github.com/yuorei/hackathon/services/gateway/graph/model"
+	"github.com/yuorei/hackathon/graph/model"
 )
 
 // region    ************************** generated!.gotpl **************************
@@ -493,7 +493,7 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 	var arg0 model.CreateUserInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNcreateUserInput2githubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐCreateUserInput(ctx, tmp)
+		arg0, err = ec.unmarshalNcreateUserInput2githubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐCreateUserInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -745,7 +745,7 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 	}
 	res := resTmp.(*model.UserPayload)
 	fc.Result = res
-	return ec.marshalNuserPayload2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐUserPayload(ctx, field.Selections, res)
+	return ec.marshalNuserPayload2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐUserPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -816,7 +816,7 @@ func (ec *executionContext) _Query_node(ctx context.Context, field graphql.Colle
 	}
 	res := resTmp.(model.Node)
 	fc.Result = res
-	return ec.marshalNNode2githubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐNode(ctx, field.Selections, res)
+	return ec.marshalNNode2githubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐNode(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -871,7 +871,7 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 	}
 	res := resTmp.(*model.UserPayload)
 	fc.Result = res
-	return ec.marshalNuserPayload2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐUserPayload(ctx, field.Selections, res)
+	return ec.marshalNuserPayload2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐUserPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1420,7 +1420,7 @@ func (ec *executionContext) _User_gender(ctx context.Context, field graphql.Coll
 	}
 	res := resTmp.(*model.Gender)
 	fc.Result = res
-	return ec.marshalOGender2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐGender(ctx, field.Selections, res)
+	return ec.marshalOGender2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐGender(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_User_gender(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1461,7 +1461,7 @@ func (ec *executionContext) _User_affiliation(ctx context.Context, field graphql
 	}
 	res := resTmp.(*model.Affiliation)
 	fc.Result = res
-	return ec.marshalOAffiliation2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐAffiliation(ctx, field.Selections, res)
+	return ec.marshalOAffiliation2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐAffiliation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_User_affiliation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1502,7 +1502,7 @@ func (ec *executionContext) _User_groups(ctx context.Context, field graphql.Coll
 	}
 	res := resTmp.([]*model.Group)
 	fc.Result = res
-	return ec.marshalOGroup2ᚕᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐGroupᚄ(ctx, field.Selections, res)
+	return ec.marshalOGroup2ᚕᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐGroupᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_User_groups(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1551,7 +1551,7 @@ func (ec *executionContext) _User_Skills(ctx context.Context, field graphql.Coll
 	}
 	res := resTmp.([]*model.Skill)
 	fc.Result = res
-	return ec.marshalOSkill2ᚕᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐSkillᚄ(ctx, field.Selections, res)
+	return ec.marshalOSkill2ᚕᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐSkillᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_User_Skills(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3503,7 +3503,7 @@ func (ec *executionContext) _userPayload_gender(ctx context.Context, field graph
 	}
 	res := resTmp.(*model.Gender)
 	fc.Result = res
-	return ec.marshalOGender2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐGender(ctx, field.Selections, res)
+	return ec.marshalOGender2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐGender(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_userPayload_gender(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3544,7 +3544,7 @@ func (ec *executionContext) _userPayload_affiliation(ctx context.Context, field 
 	}
 	res := resTmp.(*model.Affiliation)
 	fc.Result = res
-	return ec.marshalOAffiliation2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐAffiliation(ctx, field.Selections, res)
+	return ec.marshalOAffiliation2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐAffiliation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_userPayload_affiliation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3585,7 +3585,7 @@ func (ec *executionContext) _userPayload_groups(ctx context.Context, field graph
 	}
 	res := resTmp.([]*model.Group)
 	fc.Result = res
-	return ec.marshalOGroup2ᚕᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐGroupᚄ(ctx, field.Selections, res)
+	return ec.marshalOGroup2ᚕᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐGroupᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_userPayload_groups(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3634,7 +3634,7 @@ func (ec *executionContext) _userPayload_Skills(ctx context.Context, field graph
 	}
 	res := resTmp.([]*model.Skill)
 	fc.Result = res
-	return ec.marshalOSkill2ᚕᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐSkillᚄ(ctx, field.Selections, res)
+	return ec.marshalOSkill2ᚕᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐSkillᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_userPayload_Skills(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3709,7 +3709,7 @@ func (ec *executionContext) unmarshalInputcreateUserInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gender"))
-			data, err := ec.unmarshalOGender2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐGender(ctx, v)
+			data, err := ec.unmarshalOGender2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐGender(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3718,7 +3718,7 @@ func (ec *executionContext) unmarshalInputcreateUserInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("affiliation"))
-			data, err := ec.unmarshalOAffiliation2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐAffiliation(ctx, v)
+			data, err := ec.unmarshalOAffiliation2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐAffiliation(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4489,7 +4489,7 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNGroup2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐGroup(ctx context.Context, sel ast.SelectionSet, v *model.Group) graphql.Marshaler {
+func (ec *executionContext) marshalNGroup2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐGroup(ctx context.Context, sel ast.SelectionSet, v *model.Group) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4529,7 +4529,7 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalNNode2githubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐNode(ctx context.Context, sel ast.SelectionSet, v model.Node) graphql.Marshaler {
+func (ec *executionContext) marshalNNode2githubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐNode(ctx context.Context, sel ast.SelectionSet, v model.Node) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4539,7 +4539,7 @@ func (ec *executionContext) marshalNNode2githubᚗcomᚋyuoreiᚋhackathonᚋser
 	return ec._Node(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNSkill2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐSkill(ctx context.Context, sel ast.SelectionSet, v *model.Skill) graphql.Marshaler {
+func (ec *executionContext) marshalNSkill2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐSkill(ctx context.Context, sel ast.SelectionSet, v *model.Skill) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4817,16 +4817,16 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) unmarshalNcreateUserInput2githubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐCreateUserInput(ctx context.Context, v interface{}) (model.CreateUserInput, error) {
+func (ec *executionContext) unmarshalNcreateUserInput2githubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐCreateUserInput(ctx context.Context, v interface{}) (model.CreateUserInput, error) {
 	res, err := ec.unmarshalInputcreateUserInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNuserPayload2githubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐUserPayload(ctx context.Context, sel ast.SelectionSet, v model.UserPayload) graphql.Marshaler {
+func (ec *executionContext) marshalNuserPayload2githubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐUserPayload(ctx context.Context, sel ast.SelectionSet, v model.UserPayload) graphql.Marshaler {
 	return ec._userPayload(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNuserPayload2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐUserPayload(ctx context.Context, sel ast.SelectionSet, v *model.UserPayload) graphql.Marshaler {
+func (ec *executionContext) marshalNuserPayload2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐUserPayload(ctx context.Context, sel ast.SelectionSet, v *model.UserPayload) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4836,7 +4836,7 @@ func (ec *executionContext) marshalNuserPayload2ᚖgithubᚗcomᚋyuoreiᚋhacka
 	return ec._userPayload(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOAffiliation2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐAffiliation(ctx context.Context, v interface{}) (*model.Affiliation, error) {
+func (ec *executionContext) unmarshalOAffiliation2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐAffiliation(ctx context.Context, v interface{}) (*model.Affiliation, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -4845,7 +4845,7 @@ func (ec *executionContext) unmarshalOAffiliation2ᚖgithubᚗcomᚋyuoreiᚋhac
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOAffiliation2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐAffiliation(ctx context.Context, sel ast.SelectionSet, v *model.Affiliation) graphql.Marshaler {
+func (ec *executionContext) marshalOAffiliation2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐAffiliation(ctx context.Context, sel ast.SelectionSet, v *model.Affiliation) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -4878,7 +4878,7 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) unmarshalOGender2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐGender(ctx context.Context, v interface{}) (*model.Gender, error) {
+func (ec *executionContext) unmarshalOGender2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐGender(ctx context.Context, v interface{}) (*model.Gender, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -4887,14 +4887,14 @@ func (ec *executionContext) unmarshalOGender2ᚖgithubᚗcomᚋyuoreiᚋhackatho
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOGender2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐGender(ctx context.Context, sel ast.SelectionSet, v *model.Gender) graphql.Marshaler {
+func (ec *executionContext) marshalOGender2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐGender(ctx context.Context, sel ast.SelectionSet, v *model.Gender) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return v
 }
 
-func (ec *executionContext) marshalOGroup2ᚕᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐGroupᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Group) graphql.Marshaler {
+func (ec *executionContext) marshalOGroup2ᚕᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐGroupᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Group) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -4921,7 +4921,7 @@ func (ec *executionContext) marshalOGroup2ᚕᚖgithubᚗcomᚋyuoreiᚋhackatho
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNGroup2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐGroup(ctx, sel, v[i])
+			ret[i] = ec.marshalNGroup2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐGroup(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -4941,7 +4941,7 @@ func (ec *executionContext) marshalOGroup2ᚕᚖgithubᚗcomᚋyuoreiᚋhackatho
 	return ret
 }
 
-func (ec *executionContext) marshalOSkill2ᚕᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐSkillᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Skill) graphql.Marshaler {
+func (ec *executionContext) marshalOSkill2ᚕᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐSkillᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Skill) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -4968,7 +4968,7 @@ func (ec *executionContext) marshalOSkill2ᚕᚖgithubᚗcomᚋyuoreiᚋhackatho
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNSkill2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋservicesᚋgatewayᚋgraphᚋmodelᚐSkill(ctx, sel, v[i])
+			ret[i] = ec.marshalNSkill2ᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐSkill(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
