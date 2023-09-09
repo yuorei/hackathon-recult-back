@@ -30,8 +30,8 @@ message GetUserResponse {
     string mail = 3;
     Gender gender = 4;
     Affiliation affiliation = 5;
-    repeated Group groups = 6;
-    repeated Skill skills = 7;
+    // repeated Group groups = 6;
+    // repeated Skill skills = 7;
 }
 
 message CreateUserRequest {
@@ -40,8 +40,8 @@ message CreateUserRequest {
     string password = 3;
     Gender gender = 4;
     Affiliation affiliation = 5;
-    repeated Group groups = 6;
-    repeated Skill skills = 7;
+    // repeated Group groups = 6;
+    // repeated Skill skills = 7;
 }
 
 message CreateUserResponse {
@@ -50,8 +50,8 @@ message CreateUserResponse {
     string mail = 3;
     Gender gender = 4;
     Affiliation affiliation = 5;
-    repeated Group groups = 6;
-    repeated Skill skills = 7;
+    // repeated Group groups = 6;
+    // repeated Skill skills = 7;
 }
 
 message Group {
