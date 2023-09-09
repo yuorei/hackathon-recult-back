@@ -2,7 +2,7 @@
 # Source: user.proto for package 'user'
 
 require 'grpc'
-require 'user_pb'
+require_relative 'user_pb'
 
 module User
   module UserService
