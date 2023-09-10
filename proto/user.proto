@@ -6,7 +6,7 @@ option go_package = "/user";
 
 service UserService {
     rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
-    rpc CreateUser(GetUserRequest) returns (GetUserResponse) {}
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {}
 }
 
 message GetUserRequest {
@@ -27,7 +27,7 @@ enum Affiliation {
 message GetUserResponse {
     int64 id = 1;
     string name = 2;
-    string mail = 3;
+    string email = 3;
     Gender gender = 4;
     Affiliation affiliation = 5;
     // repeated Group groups = 6;
@@ -36,7 +36,7 @@ message GetUserResponse {
 
 message CreateUserRequest {
     string name = 1;
-    string mail = 2;
+    string email = 2;
     string password = 3;
     Gender gender = 4;
     Affiliation affiliation = 5;
@@ -47,7 +47,7 @@ message CreateUserRequest {
 message CreateUserResponse {
     int64 id = 1;
     string name = 2;
-    string mail = 3;
+    string email = 3;
     Gender gender = 4;
     Affiliation affiliation = 5;
     // repeated Group groups = 6;

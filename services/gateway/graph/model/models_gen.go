@@ -40,12 +40,12 @@ func (this Skill) GetID() string { return this.ID }
 type User struct {
 	ID          string       `json:"id"`
 	Name        string       `json:"name"`
-	Mail        string       `json:"mail"`
+	Email       string       `json:"email"`
 	Password    string       `json:"password"`
 	Gender      *Gender      `json:"gender,omitempty"`
 	Affiliation *Affiliation `json:"affiliation,omitempty"`
 	Groups      []*Group     `json:"groups,omitempty"`
-	Skills      []*Skill     `json:"Skills,omitempty"`
+	Skills      []*Skill     `json:"skills,omitempty"`
 }
 
 func (User) IsNode() {}
@@ -54,22 +54,22 @@ func (User) IsNode() {}
 func (this User) GetID() string { return this.ID }
 
 type CreateUserInput struct {
-	Naem        string       `json:"naem"`
-	Mail        string       `json:"mail"`
+	Name        string       `json:"name"`
+	Email       string       `json:"email"`
 	Password    string       `json:"password"`
 	Gender      *Gender      `json:"gender,omitempty"`
 	Affiliation *Affiliation `json:"affiliation,omitempty"`
-	GroupName   *string      `json:"GroupName,omitempty"`
+	GroupName   *string      `json:"groupName,omitempty"`
 }
 
 type UserPayload struct {
 	ID          string       `json:"id"`
 	Name        string       `json:"name"`
-	Mail        string       `json:"mail"`
+	Email       string       `json:"email"`
 	Gender      *Gender      `json:"gender,omitempty"`
 	Affiliation *Affiliation `json:"affiliation,omitempty"`
 	Groups      []*Group     `json:"groups,omitempty"`
-	Skills      []*Skill     `json:"Skills,omitempty"`
+	Skills      []*Skill     `json:"skills,omitempty"`
 }
 
 func (UserPayload) IsNode() {}
