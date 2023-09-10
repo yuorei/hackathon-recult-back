@@ -7,7 +7,9 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"strconv"
 
+	"github.com/yuorei/hackathon/go/user"
 	"github.com/yuorei/hackathon/graph/generated"
 	"github.com/yuorei/hackathon/graph/model"
 )
@@ -19,12 +21,33 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUse
 		return nil, err
 	}
 
+	userID := strconv.Itoa(int(response.Id))
+	userID = fmt.Sprintf("user_%s", userID)
+
+	var gender model.Gender
+	switch response.Gender {
+	case user.Gender_MAN:
+		gender = model.GenderMan
+	case user.Gender_WOMAN:
+		gender = model.GenderWoman
+	case user.Gender_GENDER_OTHER:
+		gender = model.GenderOther
+	}
+
+	var affiliation model.Affiliation
+	switch response.Affiliation {
+	case user.Affiliation_STUDENT:
+		affiliation = model.AffiliationStudent
+	case user.Affiliation_AFFILIATION_OTHER:
+		affiliation = model.AffiliationOther
+	}
+
 	return &model.UserPayload{
-		ID:    "response.Idです",
-		Name:  response.Name,
-		Email: response.Email,
-		// Gender:
-		// Affiliation: response.Affiliation,
+		ID:          userID,
+		Name:        response.Name,
+		Email:       response.Email,
+		Gender:      &gender,
+		Affiliation: &affiliation,
 	}, nil
 }
 
