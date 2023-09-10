@@ -27,7 +27,7 @@ class UserServiceImpl < User::UserService::Service
     end
 
     def create_user(request, _call)
-      @@db.create_user_in_database(request)
+      err_create_user = @@db.create_user_in_database(request)
       user =  @@db.fetch_user_from_database_by_email(request.email)
 
       user_id = nil
@@ -43,6 +43,11 @@ class UserServiceImpl < User::UserService::Service
         user_hashed_password = row['hashed_password']
         user_gender = row['gender']
         user_affiliation = row['affiliation']
+      end
+
+      if err_create_user != nil
+        user_id = 0
+        user_email = err_create_user
       end
 
       response = User::CreateUserResponse.new(

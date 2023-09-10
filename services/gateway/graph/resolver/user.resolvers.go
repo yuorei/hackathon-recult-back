@@ -21,6 +21,12 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUse
 		return nil, err
 	}
 
+	// id が 0 の場合はエラー
+	if response.Id == 0 {
+		// emailの中にエラーが入っている
+		return nil, fmt.Errorf("failed to create user: %s", response.Email)
+	}
+
 	userID := strconv.Itoa(int(response.Id))
 	userID = fmt.Sprintf("user_%s", userID)
 
