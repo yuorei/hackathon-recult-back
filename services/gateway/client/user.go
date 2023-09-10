@@ -32,13 +32,32 @@ func (c *Client) NewUserClient() {
 }
 
 func (c *Client) CreateUser(input model.CreateUserInput) (*user.CreateUserResponse, error) {
+	var gender *user.Gender
+	switch input.Gender.String() {
+	case model.GenderMan.String():
+		gender = user.Gender_MAN.Enum()
+	case model.GenderWoman.String():
+		gender = user.Gender_WOMAN.Enum()
+	case model.GenderOther.String():
+		gender = user.Gender_GENDER_OTHER.Enum()
+	}
+
+	var affiliation *user.Affiliation
+	switch input.Affiliation.String() {
+	case model.AffiliationStudent.String():
+		affiliation = user.Affiliation_STUDENT.Enum()
+	case model.AffiliationOther.String():
+		affiliation = user.Affiliation_AFFILIATION_OTHER.Enum()
+	}
+
 	// リクエストの生成
 	request := &user.CreateUserRequest{
-		Name:        "test",
+		Name:        input.Name,
 		Email:       input.Email,
-		Password:    "password",
-		Gender:      0,
-		Affiliation: 0,
+		// TODO: パスワードのハッシュ化
+		Password:    input.Password,
+		Gender:      *gender,
+		Affiliation: *affiliation,
 	}
 
 	response, err := c.userClient.CreateUser(context.Background(), request)
