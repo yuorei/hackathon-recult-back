@@ -14,7 +14,18 @@ import (
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*model.UserPayload, error) {
-	panic(fmt.Errorf("not implemented: CreateUser - createUser"))
+	response, err := r.client.CreateUser(input)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.UserPayload{
+		ID:    "response.Idです",
+		Name:  response.Name,
+		Email: response.Email,
+		// Gender:
+		// Affiliation: response.Affiliation,
+	}, nil
 }
 
 // User is the resolver for the user field.
