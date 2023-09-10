@@ -1,12 +1,12 @@
 type User implements Node{
   id: ID!
   name: String!
-  mail: String!
+  email: String!
   password: String!
   gender: Gender
   affiliation: Affiliation
   groups: [Group!]
-  Skills: [Skill!]
+  skills: [Skill!]
 }
 
 enum Gender {
@@ -27,22 +27,22 @@ type Group implements Node{
 }
 
 input createUserInput {
-  naem: String!
-  mail: String!
+  name: String!
+  email: String!
   password: String!
   gender: Gender
   affiliation: Affiliation
-  GroupName: String
+  groupName: String
 }
 
 type userPayload implements Node {
   id: ID!
   name: String!
-  mail: String!
+  email: String!
   gender: Gender
   affiliation: Affiliation
   groups: [Group!]
-  Skills: [Skill!]
+  skills: [Skill!]
 }
 
 extend type Query {

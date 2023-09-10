@@ -68,10 +68,10 @@ type ComplexityRoot struct {
 
 	User struct {
 		Affiliation func(childComplexity int) int
+		Email       func(childComplexity int) int
 		Gender      func(childComplexity int) int
 		Groups      func(childComplexity int) int
 		ID          func(childComplexity int) int
-		Mail        func(childComplexity int) int
 		Name        func(childComplexity int) int
 		Password    func(childComplexity int) int
 		Skills      func(childComplexity int) int
@@ -79,10 +79,10 @@ type ComplexityRoot struct {
 
 	UserPayload struct {
 		Affiliation func(childComplexity int) int
+		Email       func(childComplexity int) int
 		Gender      func(childComplexity int) int
 		Groups      func(childComplexity int) int
 		ID          func(childComplexity int) int
-		Mail        func(childComplexity int) int
 		Name        func(childComplexity int) int
 		Skills      func(childComplexity int) int
 	}
@@ -203,6 +203,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Affiliation(childComplexity), true
 
+	case "User.email":
+		if e.complexity.User.Email == nil {
+			break
+		}
+
+		return e.complexity.User.Email(childComplexity), true
+
 	case "User.gender":
 		if e.complexity.User.Gender == nil {
 			break
@@ -224,13 +231,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.ID(childComplexity), true
 
-	case "User.mail":
-		if e.complexity.User.Mail == nil {
-			break
-		}
-
-		return e.complexity.User.Mail(childComplexity), true
-
 	case "User.name":
 		if e.complexity.User.Name == nil {
 			break
@@ -245,7 +245,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Password(childComplexity), true
 
-	case "User.Skills":
+	case "User.skills":
 		if e.complexity.User.Skills == nil {
 			break
 		}
@@ -258,6 +258,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.UserPayload.Affiliation(childComplexity), true
+
+	case "userPayload.email":
+		if e.complexity.UserPayload.Email == nil {
+			break
+		}
+
+		return e.complexity.UserPayload.Email(childComplexity), true
 
 	case "userPayload.gender":
 		if e.complexity.UserPayload.Gender == nil {
@@ -280,13 +287,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UserPayload.ID(childComplexity), true
 
-	case "userPayload.mail":
-		if e.complexity.UserPayload.Mail == nil {
-			break
-		}
-
-		return e.complexity.UserPayload.Mail(childComplexity), true
-
 	case "userPayload.name":
 		if e.complexity.UserPayload.Name == nil {
 			break
@@ -294,7 +294,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UserPayload.Name(childComplexity), true
 
-	case "userPayload.Skills":
+	case "userPayload.skills":
 		if e.complexity.UserPayload.Skills == nil {
 			break
 		}
@@ -428,12 +428,12 @@ type Query{
 	{Name: "../schema/user.graphqls", Input: `type User implements Node{
   id: ID!
   name: String!
-  mail: String!
+  email: String!
   password: String!
   gender: Gender
   affiliation: Affiliation
   groups: [Group!]
-  Skills: [Skill!]
+  skills: [Skill!]
 }
 
 enum Gender {
@@ -454,22 +454,22 @@ type Group implements Node{
 }
 
 input createUserInput {
-  naem: String!
-  mail: String!
+  name: String!
+  email: String!
   password: String!
   gender: Gender
   affiliation: Affiliation
-  GroupName: String
+  groupName: String
 }
 
 type userPayload implements Node {
   id: ID!
   name: String!
-  mail: String!
+  email: String!
   gender: Gender
   affiliation: Affiliation
   groups: [Group!]
-  Skills: [Skill!]
+  skills: [Skill!]
 }
 
 extend type Query {
@@ -760,16 +760,16 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 				return ec.fieldContext_userPayload_id(ctx, field)
 			case "name":
 				return ec.fieldContext_userPayload_name(ctx, field)
-			case "mail":
-				return ec.fieldContext_userPayload_mail(ctx, field)
+			case "email":
+				return ec.fieldContext_userPayload_email(ctx, field)
 			case "gender":
 				return ec.fieldContext_userPayload_gender(ctx, field)
 			case "affiliation":
 				return ec.fieldContext_userPayload_affiliation(ctx, field)
 			case "groups":
 				return ec.fieldContext_userPayload_groups(ctx, field)
-			case "Skills":
-				return ec.fieldContext_userPayload_Skills(ctx, field)
+			case "skills":
+				return ec.fieldContext_userPayload_skills(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type userPayload", field.Name)
 		},
@@ -886,16 +886,16 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_userPayload_id(ctx, field)
 			case "name":
 				return ec.fieldContext_userPayload_name(ctx, field)
-			case "mail":
-				return ec.fieldContext_userPayload_mail(ctx, field)
+			case "email":
+				return ec.fieldContext_userPayload_email(ctx, field)
 			case "gender":
 				return ec.fieldContext_userPayload_gender(ctx, field)
 			case "affiliation":
 				return ec.fieldContext_userPayload_affiliation(ctx, field)
 			case "groups":
 				return ec.fieldContext_userPayload_groups(ctx, field)
-			case "Skills":
-				return ec.fieldContext_userPayload_Skills(ctx, field)
+			case "skills":
+				return ec.fieldContext_userPayload_skills(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type userPayload", field.Name)
 		},
@@ -1307,8 +1307,8 @@ func (ec *executionContext) fieldContext_User_name(ctx context.Context, field gr
 	return fc, nil
 }
 
-func (ec *executionContext) _User_mail(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_mail(ctx, field)
+func (ec *executionContext) _User_email(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_email(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1321,7 +1321,7 @@ func (ec *executionContext) _User_mail(ctx context.Context, field graphql.Collec
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Mail, nil
+		return obj.Email, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1338,7 +1338,7 @@ func (ec *executionContext) _User_mail(ctx context.Context, field graphql.Collec
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_mail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_email(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -1526,8 +1526,8 @@ func (ec *executionContext) fieldContext_User_groups(ctx context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _User_Skills(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_Skills(ctx, field)
+func (ec *executionContext) _User_skills(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_skills(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1554,7 +1554,7 @@ func (ec *executionContext) _User_Skills(ctx context.Context, field graphql.Coll
 	return ec.marshalOSkill2ᚕᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐSkillᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_Skills(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_skills(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -3434,8 +3434,8 @@ func (ec *executionContext) fieldContext_userPayload_name(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _userPayload_mail(ctx context.Context, field graphql.CollectedField, obj *model.UserPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_userPayload_mail(ctx, field)
+func (ec *executionContext) _userPayload_email(ctx context.Context, field graphql.CollectedField, obj *model.UserPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_userPayload_email(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3448,7 +3448,7 @@ func (ec *executionContext) _userPayload_mail(ctx context.Context, field graphql
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Mail, nil
+		return obj.Email, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3465,7 +3465,7 @@ func (ec *executionContext) _userPayload_mail(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_userPayload_mail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_userPayload_email(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "userPayload",
 		Field:      field,
@@ -3609,8 +3609,8 @@ func (ec *executionContext) fieldContext_userPayload_groups(ctx context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _userPayload_Skills(ctx context.Context, field graphql.CollectedField, obj *model.UserPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_userPayload_Skills(ctx, field)
+func (ec *executionContext) _userPayload_skills(ctx context.Context, field graphql.CollectedField, obj *model.UserPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_userPayload_skills(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3637,7 +3637,7 @@ func (ec *executionContext) _userPayload_Skills(ctx context.Context, field graph
 	return ec.marshalOSkill2ᚕᚖgithubᚗcomᚋyuoreiᚋhackathonᚋgraphᚋmodelᚐSkillᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_userPayload_Skills(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_userPayload_skills(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "userPayload",
 		Field:      field,
@@ -3671,31 +3671,31 @@ func (ec *executionContext) unmarshalInputcreateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"naem", "mail", "password", "gender", "affiliation", "GroupName"}
+	fieldsInOrder := [...]string{"name", "email", "password", "gender", "affiliation", "groupName"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "naem":
+		case "name":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("naem"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Naem = data
-		case "mail":
+			it.Name = data
+		case "email":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mail"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Mail = data
+			it.Email = data
 		case "password":
 			var err error
 
@@ -3723,10 +3723,10 @@ func (ec *executionContext) unmarshalInputcreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Affiliation = data
-		case "GroupName":
+		case "groupName":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("GroupName"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupName"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
@@ -4050,8 +4050,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "mail":
-			out.Values[i] = ec._User_mail(ctx, field, obj)
+		case "email":
+			out.Values[i] = ec._User_email(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -4066,8 +4066,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._User_affiliation(ctx, field, obj)
 		case "groups":
 			out.Values[i] = ec._User_groups(ctx, field, obj)
-		case "Skills":
-			out.Values[i] = ec._User_Skills(ctx, field, obj)
+		case "skills":
+			out.Values[i] = ec._User_skills(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4434,8 +4434,8 @@ func (ec *executionContext) _userPayload(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "mail":
-			out.Values[i] = ec._userPayload_mail(ctx, field, obj)
+		case "email":
+			out.Values[i] = ec._userPayload_email(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -4445,8 +4445,8 @@ func (ec *executionContext) _userPayload(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._userPayload_affiliation(ctx, field, obj)
 		case "groups":
 			out.Values[i] = ec._userPayload_groups(ctx, field, obj)
-		case "Skills":
-			out.Values[i] = ec._userPayload_Skills(ctx, field, obj)
+		case "skills":
+			out.Values[i] = ec._userPayload_skills(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

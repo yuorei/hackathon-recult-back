@@ -1,16 +1,18 @@
 package client
 
 import (
+	"context"
 	"log"
 
 	"github.com/yuorei/hackathon/go/user"
+	"github.com/yuorei/hackathon/graph/model"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 func (c *Client) NewUserClient() {
 	// サーバーのアドレスを指定
-	userAddress := "localhost:8080"
+	userAddress := "localhost:50051"
 	// サーバーに接続する
 	userConn, err := grpc.Dial(
 		userAddress,
@@ -27,4 +29,40 @@ func (c *Client) NewUserClient() {
 
 	// gRPCクライアントを生成
 	c.userClient = user.NewUserServiceClient(userConn)
+}
+
+func (c *Client) CreateUser(input model.CreateUserInput) (*user.CreateUserResponse, error) {
+	var gender *user.Gender
+	switch input.Gender.String() {
+	case model.GenderMan.String():
+		gender = user.Gender_MAN.Enum()
+	case model.GenderWoman.String():
+		gender = user.Gender_WOMAN.Enum()
+	case model.GenderOther.String():
+		gender = user.Gender_GENDER_OTHER.Enum()
+	}
+
+	var affiliation *user.Affiliation
+	switch input.Affiliation.String() {
+	case model.AffiliationStudent.String():
+		affiliation = user.Affiliation_STUDENT.Enum()
+	case model.AffiliationOther.String():
+		affiliation = user.Affiliation_AFFILIATION_OTHER.Enum()
+	}
+
+	// リクエストの生成
+	request := &user.CreateUserRequest{
+		Name:        input.Name,
+		Email:       input.Email,
+		// TODO: パスワードのハッシュ化
+		Password:    input.Password,
+		Gender:      *gender,
+		Affiliation: *affiliation,
+	}
+
+	response, err := c.userClient.CreateUser(context.Background(), request)
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
 }
