@@ -15,7 +15,7 @@ module User
       self.service_name = 'user.UserService'
 
       rpc :GetUser, ::User::GetUserRequest, ::User::GetUserResponse
-      rpc :CreateUser, ::User::GetUserRequest, ::User::GetUserResponse
+      rpc :CreateUser, ::User::CreateUserRequest, ::User::CreateUserResponse
     end
 
     Stub = Service.rpc_stub_class
