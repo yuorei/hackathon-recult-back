@@ -7,7 +7,6 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/yuorei/hackathon/application"
 	"github.com/yuorei/hackathon/graph/generated"
 	"github.com/yuorei/hackathon/graph/resolver"
 )
@@ -20,8 +19,7 @@ func main() {
 		port = defaultPort
 	}
 
-	app := application.NewApplication()
-	resolver := resolver.NewResolver(app)
+	resolver := resolver.NewResolver()
 
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: resolver}))
 

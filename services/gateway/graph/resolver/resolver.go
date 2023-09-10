@@ -1,6 +1,9 @@
 package resolver
 
-import "github.com/yuorei/hackathon/application"
+import (
+	"github.com/yuorei/hackathon/application"
+	"github.com/yuorei/hackathon/client"
+)
 
 //go:generate go run github.com/99designs/gqlgen generate
 // This file will not be regenerated automatically.
@@ -8,9 +11,13 @@ import "github.com/yuorei/hackathon/application"
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	app *application.App
+	app    *application.App
+	client *client.Client
 }
 
-func NewResolver(app *application.App) *Resolver {
-	return &Resolver{app: app}
+func NewResolver() *Resolver {
+	return &Resolver{
+		app:    application.NewApplication(),
+		client: client.NewClient(),
+	}
 }
