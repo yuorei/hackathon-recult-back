@@ -1,0 +1,14 @@
+# 公式のMySQL Dockerイメージをベースにします
+FROM mysql:latest
+
+# MySQLルートユーザーのパスワードを設定します（適切なパスワードに置き換えてください）
+ENV MYSQL_ROOT_PASSWORD=password
+
+# データベースの初期化スクリプトをコピーします（オプション）
+# このスクリプトは、Dockerコンテナが初めて起動されたときに実行されます
+COPY ./sql/creata_table.sql /docker-entrypoint-initdb.d/
+
+# ポートをエクスポート（デフォルトは3306です）
+# EXPOSE 3306
+
+# Dockerコンテナが起動した際に自動的にMySQLが起動するため、CMDを指定する必要はありません

@@ -11,7 +11,7 @@ import (
 )
 
 func (c *Client) NewUserClient() {
-	// サーバーのアドレスを指定
+	// TCPサーバーのアドレスを指定
 	userAddress := "localhost:50051"
 	// サーバーに接続する
 	userConn, err := grpc.Dial(
@@ -23,7 +23,7 @@ func (c *Client) NewUserClient() {
 	)
 
 	if err != nil {
-		log.Fatal("Connection failed.")
+		log.Fatal("Connection failed. err: ", err)
 		return
 	}
 
@@ -52,8 +52,8 @@ func (c *Client) CreateUser(input model.CreateUserInput) (*user.CreateUserRespon
 
 	// リクエストの生成
 	request := &user.CreateUserRequest{
-		Name:        input.Name,
-		Email:       input.Email,
+		Name:  input.Name,
+		Email: input.Email,
 		// TODO: パスワードのハッシュ化
 		Password:    input.Password,
 		Gender:      *gender,
