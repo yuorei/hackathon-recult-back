@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"strconv"
+
+	"github.com/99designs/gqlgen/graphql"
 )
 
 type Node interface {
@@ -38,14 +40,15 @@ func (Skill) IsNode() {}
 func (this Skill) GetID() string { return this.ID }
 
 type User struct {
-	ID          string       `json:"id"`
-	Name        string       `json:"name"`
-	Email       string       `json:"email"`
-	Password    string       `json:"password"`
-	Gender      *Gender      `json:"gender,omitempty"`
-	Affiliation *Affiliation `json:"affiliation,omitempty"`
-	Groups      []*Group     `json:"groups,omitempty"`
-	Skills      []*Skill     `json:"skills,omitempty"`
+	ID              string       `json:"id"`
+	Name            string       `json:"name"`
+	Email           string       `json:"email"`
+	Password        string       `json:"password"`
+	ProfileImageURL *string      `json:"profileImageURL,omitempty"`
+	Gender          *Gender      `json:"gender,omitempty"`
+	Affiliation     *Affiliation `json:"affiliation,omitempty"`
+	Groups          []*Group     `json:"groups,omitempty"`
+	Skills          []*Skill     `json:"skills,omitempty"`
 }
 
 func (User) IsNode() {}
@@ -54,22 +57,24 @@ func (User) IsNode() {}
 func (this User) GetID() string { return this.ID }
 
 type CreateUserInput struct {
-	Name        string       `json:"name"`
-	Email       string       `json:"email"`
-	Password    string       `json:"password"`
-	Gender      *Gender      `json:"gender,omitempty"`
-	Affiliation *Affiliation `json:"affiliation,omitempty"`
-	GroupName   *string      `json:"groupName,omitempty"`
+	Name         string          `json:"name"`
+	Email        string          `json:"email"`
+	Password     string          `json:"password"`
+	ProfileImage *graphql.Upload `json:"profileImage,omitempty"`
+	Gender       *Gender         `json:"gender,omitempty"`
+	Affiliation  *Affiliation    `json:"affiliation,omitempty"`
+	GroupName    *string         `json:"groupName,omitempty"`
 }
 
 type UserPayload struct {
-	ID          string       `json:"id"`
-	Name        string       `json:"name"`
-	Email       string       `json:"email"`
-	Gender      *Gender      `json:"gender,omitempty"`
-	Affiliation *Affiliation `json:"affiliation,omitempty"`
-	Groups      []*Group     `json:"groups,omitempty"`
-	Skills      []*Skill     `json:"skills,omitempty"`
+	ID              string       `json:"id"`
+	Name            string       `json:"name"`
+	Email           string       `json:"email"`
+	Gender          *Gender      `json:"gender,omitempty"`
+	ProfileImageURL *string      `json:"profileImageURL,omitempty"`
+	Affiliation     *Affiliation `json:"affiliation,omitempty"`
+	Groups          []*Group     `json:"groups,omitempty"`
+	Skills          []*Skill     `json:"skills,omitempty"`
 }
 
 func (UserPayload) IsNode() {}
