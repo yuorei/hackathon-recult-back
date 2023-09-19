@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package image;
+
+option go_package = "/image";
+
+// ファイルメタ情報
+message Meta {
+  string name = 1;
+  string desc = 2;
+}
+
+message UploadRequest {
+    // 最初のリクエストはmeta 2回目以降のリクエストはdata
+    oneof value {
+      Meta meta = 1;
+      bytes data = 2;
+    }
+}
+
+message UploadResponse {
+    string image_url = 1;
+}
+
+service UploadImage {
+    rpc Upload (stream UploadRequest) returns (UploadResponse);
+}
