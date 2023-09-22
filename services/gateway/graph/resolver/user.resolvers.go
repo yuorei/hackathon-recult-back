@@ -17,6 +17,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUse
 	var imageURL *string
 	if input.ProfileImage != nil {
 		var err error
+		input.ProfileImage.Filename = fmt.Sprintf("%s_%s", input.Email, input.ProfileImage.Filename)
 		responseImage, err = r.client.UploadImage(input.ProfileImage)
 		if err != nil {
 			return nil, err
