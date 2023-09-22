@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/yuorei/hackathon/go/image"
 	"github.com/yuorei/hackathon/go/user"
 	"github.com/yuorei/hackathon/graph/generated"
 	"github.com/yuorei/hackathon/graph/model"
@@ -12,44 +13,55 @@ import (
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*model.UserPayload, error) {
-	response, err := r.client.CreateUser(input)
+	var responseImage *image.UploadResponse
+	var imageURL *string
+	if input.ProfileImage != nil {
+		var err error
+		responseImage, err = r.client.UploadImage(input.ProfileImage)
+		if err != nil {
+			return nil, err
+		}
+		imageURL = &responseImage.ImageUrl
+	}
+	responseUser, err := r.client.CreateUser(input, imageURL)
 	if err != nil {
 		return nil, err
 	}
 
 	// id が 0 の場合はエラー
-	if response.Id == 0 {
+	if responseUser.Id == 0 {
 		// emailの中にエラーが入っている
-		return nil, fmt.Errorf("failed to create user: %s", response.Email)
+		return nil, fmt.Errorf("failed to create user: %s", responseUser.Email)
 	}
 
-	userID := strconv.Itoa(int(response.Id))
+	userID := strconv.Itoa(int(responseUser.Id))
 	userID = fmt.Sprintf("user_%s", userID)
 
 	var gender model.Gender
-	switch response.Gender {
+	switch responseUser.Gender {
 	case user.Gender_MAN:
 		gender = model.GenderMan
 	case user.Gender_WOMAN:
 		gender = model.GenderWoman
-	case user.Gender_GENDER_OTHER:
+	default:
 		gender = model.GenderOther
 	}
 
 	var affiliation model.Affiliation
-	switch response.Affiliation {
+	switch responseUser.Affiliation {
 	case user.Affiliation_STUDENT:
 		affiliation = model.AffiliationStudent
-	case user.Affiliation_AFFILIATION_OTHER:
+	default:
 		affiliation = model.AffiliationOther
 	}
 
 	return &model.UserPayload{
-		ID:          userID,
-		Name:        response.Name,
-		Email:       response.Email,
-		Gender:      &gender,
-		Affiliation: &affiliation,
+		ID:              userID,
+		Name:            responseUser.Name,
+		Email:           responseUser.Email,
+		ProfileImageURL: imageURL,
+		Gender:          &gender,
+		Affiliation:     &affiliation,
 	}, nil
 }
 
