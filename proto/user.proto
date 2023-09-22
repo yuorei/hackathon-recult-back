@@ -42,6 +42,7 @@ message CreateUserRequest {
     Affiliation affiliation = 5;
     // repeated Group groups = 6;
     // repeated Skill skills = 7;
+    string profile_image_url = 8;
 }
 
 message CreateUserResponse {

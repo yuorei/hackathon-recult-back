@@ -1,8 +1,11 @@
+scalar Upload
+
 type User implements Node{
   id: ID!
   name: String!
   email: String!
   password: String!
+  profileImageURL: String
   gender: Gender
   affiliation: Affiliation
   groups: [Group!]
@@ -30,6 +33,7 @@ input createUserInput {
   name: String!
   email: String!
   password: String!
+  profileImage: Upload
   gender: Gender
   affiliation: Affiliation
   groupName: String
@@ -40,6 +44,7 @@ type userPayload implements Node {
   name: String!
   email: String!
   gender: Gender
+  profileImageURL: String
   affiliation: Affiliation
   groups: [Group!]
   skills: [Skill!]

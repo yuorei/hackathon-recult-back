@@ -67,24 +67,26 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		Affiliation func(childComplexity int) int
-		Email       func(childComplexity int) int
-		Gender      func(childComplexity int) int
-		Groups      func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Name        func(childComplexity int) int
-		Password    func(childComplexity int) int
-		Skills      func(childComplexity int) int
+		Affiliation     func(childComplexity int) int
+		Email           func(childComplexity int) int
+		Gender          func(childComplexity int) int
+		Groups          func(childComplexity int) int
+		ID              func(childComplexity int) int
+		Name            func(childComplexity int) int
+		Password        func(childComplexity int) int
+		ProfileImageURL func(childComplexity int) int
+		Skills          func(childComplexity int) int
 	}
 
 	UserPayload struct {
-		Affiliation func(childComplexity int) int
-		Email       func(childComplexity int) int
-		Gender      func(childComplexity int) int
-		Groups      func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Name        func(childComplexity int) int
-		Skills      func(childComplexity int) int
+		Affiliation     func(childComplexity int) int
+		Email           func(childComplexity int) int
+		Gender          func(childComplexity int) int
+		Groups          func(childComplexity int) int
+		ID              func(childComplexity int) int
+		Name            func(childComplexity int) int
+		ProfileImageURL func(childComplexity int) int
+		Skills          func(childComplexity int) int
 	}
 }
 
@@ -245,6 +247,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Password(childComplexity), true
 
+	case "User.profileImageURL":
+		if e.complexity.User.ProfileImageURL == nil {
+			break
+		}
+
+		return e.complexity.User.ProfileImageURL(childComplexity), true
+
 	case "User.skills":
 		if e.complexity.User.Skills == nil {
 			break
@@ -293,6 +302,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.UserPayload.Name(childComplexity), true
+
+	case "userPayload.profileImageURL":
+		if e.complexity.UserPayload.ProfileImageURL == nil {
+			break
+		}
+
+		return e.complexity.UserPayload.ProfileImageURL(childComplexity), true
 
 	case "userPayload.skills":
 		if e.complexity.UserPayload.Skills == nil {
@@ -425,11 +441,14 @@ type Query{
   name: String!
   description: String!
 }`, BuiltIn: false},
-	{Name: "../schema/user.graphqls", Input: `type User implements Node{
+	{Name: "../schema/user.graphqls", Input: `scalar Upload
+
+type User implements Node{
   id: ID!
   name: String!
   email: String!
   password: String!
+  profileImageURL: String
   gender: Gender
   affiliation: Affiliation
   groups: [Group!]
@@ -457,6 +476,7 @@ input createUserInput {
   name: String!
   email: String!
   password: String!
+  profileImage: Upload
   gender: Gender
   affiliation: Affiliation
   groupName: String
@@ -467,6 +487,7 @@ type userPayload implements Node {
   name: String!
   email: String!
   gender: Gender
+  profileImageURL: String
   affiliation: Affiliation
   groups: [Group!]
   skills: [Skill!]
@@ -764,6 +785,8 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 				return ec.fieldContext_userPayload_email(ctx, field)
 			case "gender":
 				return ec.fieldContext_userPayload_gender(ctx, field)
+			case "profileImageURL":
+				return ec.fieldContext_userPayload_profileImageURL(ctx, field)
 			case "affiliation":
 				return ec.fieldContext_userPayload_affiliation(ctx, field)
 			case "groups":
@@ -890,6 +913,8 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_userPayload_email(ctx, field)
 			case "gender":
 				return ec.fieldContext_userPayload_gender(ctx, field)
+			case "profileImageURL":
+				return ec.fieldContext_userPayload_profileImageURL(ctx, field)
 			case "affiliation":
 				return ec.fieldContext_userPayload_affiliation(ctx, field)
 			case "groups":
@@ -1383,6 +1408,47 @@ func (ec *executionContext) _User_password(ctx context.Context, field graphql.Co
 }
 
 func (ec *executionContext) fieldContext_User_password(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_profileImageURL(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_profileImageURL(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProfileImageURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_profileImageURL(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -3519,6 +3585,47 @@ func (ec *executionContext) fieldContext_userPayload_gender(ctx context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _userPayload_profileImageURL(ctx context.Context, field graphql.CollectedField, obj *model.UserPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_userPayload_profileImageURL(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProfileImageURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_userPayload_profileImageURL(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "userPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _userPayload_affiliation(ctx context.Context, field graphql.CollectedField, obj *model.UserPayload) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_userPayload_affiliation(ctx, field)
 	if err != nil {
@@ -3671,7 +3778,7 @@ func (ec *executionContext) unmarshalInputcreateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "email", "password", "gender", "affiliation", "groupName"}
+	fieldsInOrder := [...]string{"name", "email", "password", "profileImage", "gender", "affiliation", "groupName"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3705,6 +3812,15 @@ func (ec *executionContext) unmarshalInputcreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Password = data
+		case "profileImage":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("profileImage"))
+			data, err := ec.unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ProfileImage = data
 		case "gender":
 			var err error
 
@@ -4060,6 +4176,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "profileImageURL":
+			out.Values[i] = ec._User_profileImageURL(ctx, field, obj)
 		case "gender":
 			out.Values[i] = ec._User_gender(ctx, field, obj)
 		case "affiliation":
@@ -4441,6 +4559,8 @@ func (ec *executionContext) _userPayload(ctx context.Context, sel ast.SelectionS
 			}
 		case "gender":
 			out.Values[i] = ec._userPayload_gender(ctx, field, obj)
+		case "profileImageURL":
+			out.Values[i] = ec._userPayload_profileImageURL(ctx, field, obj)
 		case "affiliation":
 			out.Values[i] = ec._userPayload_affiliation(ctx, field, obj)
 		case "groups":
@@ -5001,6 +5121,22 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 		return graphql.Null
 	}
 	res := graphql.MarshalString(*v)
+	return res
+}
+
+func (ec *executionContext) unmarshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, v interface{}) (*graphql.Upload, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalUpload(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, sel ast.SelectionSet, v *graphql.Upload) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalUpload(*v)
 	return res
 }
 
